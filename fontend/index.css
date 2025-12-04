@@ -1,58 +1,100 @@
-body {
-  font-family: Arial;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    font-family: 'Press Start 2P', cursive;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: #4c91d3; /* fallback se o canvas não carregar */
+}
+
+#background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
 }
 
 .login-container {
-  align-items: center;
-  background: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  width: 300px;
-  height: 350px;
+    position: relative;
+    z-index: 1;
+    background: rgba(44, 44, 44, 0.85);
+    border: 6px solid #00ff00;
+    width: 360px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 0 20px #00ff00;
+    border-radius: 0;
 }
 
-.login-container h2 {
-  text-align: center;
-  margin-bottom: 40px;
-  color: #333;
+.login-container h1 {
+    color: #00ff00;
+    text-shadow: 2px 2px #000;
+    font-size: 20px;
+    margin-bottom: 25px;
 }
 
 .login-container input {
-  width: 100%;
-  padding: 10px;
-  margin: 7px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 4px solid #00ff00;
+    border-radius: 0;
+    background: #1a1a1a;
+    color: #00ff00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #ffff00;
+    box-shadow: 0 0 10px #ffff00;
 }
 
 .login-container button {
-  width: 107%;
-  padding: 10px;
-  background: #4facfe;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border: none;
+    background: #00ff00;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px #000;
+    transition: 0.3s;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
 }
 
 .login-container button:hover {
-  background: #00c6fb;
+    background: #ffff00;
+    color: #000;
+    box-shadow: 0 0 15px #ffff00;
 }
 
-.login-container .extra {
-  text-align: center;
-  margin-top: 15px;
+.login-container a {
+    display: block;
+    margin-top: 15px;
+    font-size: 10px;
+    color: #00ff00;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-.login-container .extra a {
-  color: #4facfe;
-  text-decoration: none;
+.login-container a:hover {
+    color: #ffff00;
 }
