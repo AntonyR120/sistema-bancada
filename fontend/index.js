@@ -1,153 +1,197 @@
-const canvas = document.getElementById('background');
-const ctx = canvas.getContext('2d');
+const text = "* Por favor, insira seus dados.";
+let index = 0;
+
+const typeSound = document.getElementById("typeSound");
+const selectSound = document.getElementById("selectSound");
+const errorSound = document.getElementById("errorSound");
+
+function typeEffect() {
+    const typing = document.getElementById("typingText");
+
+    if (index < text.length) {
+        typing.textContent += text.charAt(index);
+        typeSound.currentTime = 0;
+        typeSound.play();
+        index++;
+        setTimeout(typeEffect, 40);
+    }
+}
+window.onload = typeEffect;
+
+
+// LOGIN REAL (localStorage)
+function login() {
+    let u = document.getElementById("usuario").value;
+    let s = document.getElementById("senha").value;
+
+    if (u === "" || s === "") {
+        error();
+        return;
+    }
+
+    selectSound.play();
+
+    localStorage.setItem("user", u);
+
+    document.getElementById("fade").style.animation = "fadeOut 1.5s forwards";
+
+    alert("* Login realizado com sucesso!");
+}
+
+
+/* Tremor */
+function error() {
+    errorSound.play();
+    document.body.classList.add("shake");
+    setTimeout(() => {
+        document.body.classList.remove("shake");
+    }, 300);
+}
+
+
+
+/* === PARTÍCULAS BRANCAS === */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Arrays para blocos e partículas
-const blocks = [];
-const particles = [];
-const backgroundParticles = [];
+let particlesArray = [];
 
-// Criar blocos de grama e terra
-for (let i = 0; i < canvas.width / 32; i++) {
-    blocks.push({ x: i * 32, y: canvas.height - 32, color: '#228B22' }); // grama
-    blocks.push({ x: i * 32, y: canvas.height, color: '#8B4513' });       // terra
-}
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.opacity = Math.random() * 0.5 + 0.3;
+    }
 
-// Criar partículas de fundo flutuantes
-for (let i = 0; i < 80; i++) {
-    backgroundParticles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 1,
-        color: '#ffff33',
-        speedX: (Math.random() - 0.5) * 0.3,
-        speedY: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random()
-    });
-}
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
 
-// Função para criar partículas nos botões
-function createParticle(x, y) {
-    particles.push({
-        x: x + Math.random() * 60 - 30,
-        y: y + Math.random() * 10,
-        radius: Math.random() * 2 + 1,
-        color: '#ffff00',
-        speedY: Math.random() * -1 - 0.5,
-        alpha: 1
-    });
-}
+        if (this.x < 0 || this.x > canvas.width ||
+            this.y < 0 || this.y > canvas.height) {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+        }
+    }
 
-// Atualizar partículas do botão
-function updateParticles() {
-    for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.y += p.speedY;
-        p.alpha -= 0.02;
-        if (p.alpha <= 0) particles.splice(i, 1);
+    draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
 
-// Atualizar partículas de fundo
-function updateBackgroundParticles() {
-    backgroundParticles.forEach(p => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-    });
+function initParticles() {
+    particlesArray = [];
+    for (let i = 0; i < 120; i++) {
+        particlesArray.push(new Particle());
+    }
 }
 
-// Desenhar partículas do botão
-function drawParticles() {
-    particles.forEach(p => {
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.radius, p.radius);
-    });
-    ctx.globalAlpha = 1;
-}
-
-// Desenhar partículas de fundo
-function drawBackgroundParticles() {
-    backgroundParticles.forEach(p => {
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.radius, p.radius);
-    });
-    ctx.globalAlpha = 1;
-}
-
-// Desenhar sol animado
-let sunAngle = 0;
-function drawSun() {
-    const centerX = canvas.width - 100;
-    const centerY = 100;
-    const radius = 50;
-    sunAngle += 0.001;
-    const offsetX = Math.cos(sunAngle) * 10;
-    const offsetY = Math.sin(sunAngle) * 10;
-
-    const gradient = ctx.createRadialGradient(centerX + offsetX, centerY + offsetY, 10, centerX + offsetX, centerY + offsetY, radius);
-    gradient.addColorStop(0, '#ffff33');
-    gradient.addColorStop(1, 'rgba(255,255,51,0)');
-
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(centerX + offsetX, centerY + offsetY, radius, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-// Função principal de animação
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Céu
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#4c91d3');
-    gradient.addColorStop(1, '#87ceeb');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Blocos
-    blocks.forEach(block => {
-        ctx.fillStyle = block.color;
-        ctx.fillRect(block.x, block.y, 32, 32);
-    });
-
-    // Sol
-    drawSun();
-
-    // Partículas
-    updateParticles();
-    drawParticles();
-    updateBackgroundParticles();
-    drawBackgroundParticles();
-
-    requestAnimationFrame(animate);
-}
-
-// Partículas nos botões
-const button = document.querySelector('.login-container button');
-button.addEventListener('mousemove', (e) => {
-    const rect = button.getBoundingClientRect();
-    createParticle(e.clientX - rect.left, e.clientY - rect.top);
-});
-
-// Redimensionamento
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    blocks.length = 0;
-    for (let i = 0; i < canvas.width / 32; i++) {
-        blocks.push({ x: i * 32, y: canvas.height - 32, color: '#228B22' });
-        blocks.push({ x: i * 32, y: canvas.height, color: '#8B4513' });
-    }
+    initParticles();
 });
 
-animate();
+initParticles();
+
+
+
+/* === CORAÇÃO SEGUINDO O MOUSE + PULSANDO + RASTRO === */
+
+const heart = document.getElementById("heart");
+
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+
+document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Variáveis do pulso
+let pulseScale = 1;
+let pulseDirection = 1; // 1 = aumentando, -1 = diminuindo
+const pulseSpeed = 0.02; // velocidade do pulso
+const pulseMax = 1.4; // tamanho máximo
+const pulseMin = 1.0; // tamanho mínimo
+
+// Rastro vermelho do coração
+let trailParticles = [];
+
+class TrailParticle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 6 + 2;
+        this.opacity = 0.6;
+    }
+
+    update() {
+        this.opacity -= 0.02; // desaparece lentamente
+        this.size *= 0.95; // encolhe
+    }
+
+    draw() {
+        ctx.fillStyle = `rgba(255,0,0,${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function moveAndPulseHeart() {
+    // Atualiza posição
+    heart.style.left = mouseX + "px";
+    heart.style.top = mouseY + "px";
+
+    // Atualiza escala para pulsar
+    pulseScale += pulseDirection * pulseSpeed;
+    if (pulseScale >= pulseMax) pulseDirection = -1;
+    if (pulseScale <= pulseMin) pulseDirection = 1;
+    heart.style.transform = `translate(-50%, -50%) scale(${pulseScale})`;
+
+    // Adiciona nova partícula do rastro
+    trailParticles.push(new TrailParticle(mouseX, mouseY));
+
+    // Atualiza partículas do rastro
+    trailParticles.forEach((p, index) => {
+        p.update();
+        if (p.opacity <= 0) trailParticles.splice(index, 1);
+    });
+
+    requestAnimationFrame(moveAndPulseHeart);
+}
+
+moveAndPulseHeart();
+
+
+
+/* === ANIMAÇÃO DE TODAS AS PARTÍCULAS (brancas + rastro vermelho) === */
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Partículas brancas
+    particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    // Rastro vermelho
+    trailParticles.forEach(p => {
+        p.draw();
+    });
+
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();

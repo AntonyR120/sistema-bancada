@@ -1,100 +1,129 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-* {
+body {
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body, html {
-    width: 100%;
-    height: 100%;
-    font-family: 'Press Start 2P', cursive;
+    background: black;
+    color: white;
+    font-family: 'VT323';
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    background: #4c91d3; /* fallback se o canvas não carregar */
 }
 
-#background {
-    position: absolute;
+/* Fade Undertale */
+#fade {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: black;
+    animation: fadeIn 2s forwards;
+    z-index: 999;
+}
+@keyframes fadeIn {
+    from { opacity: 1; }
+    to { opacity: 0; display: none; }
+}
+
+/* Coração Undertale pulsante */
+#heart {
+    width: 16px;
+    height: 16px;
+    background: red;
+    position: fixed;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: none;
+    clip-path: polygon(
+        50% 80%,
+        100% 30%,
+        80% 0%,
+        50% 20%,
+        20% 0%,
+        0% 30%
+    );
+}
+
+/* Canvas das partículas */
+#particles {
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: transparent;
 }
 
-.login-container {
-    position: relative;
-    z-index: 1;
-    background: rgba(44, 44, 44, 0.85);
-    border: 6px solid #00ff00;
-    width: 360px;
-    padding: 30px;
+.container {
     text-align: center;
-    box-shadow: 0 0 20px #00ff00;
-    border-radius: 0;
+    width: 350px;
+    margin: auto;
+    margin-top: 200px;
 }
 
-.login-container h1 {
-    color: #00ff00;
-    text-shadow: 2px 2px #000;
-    font-size: 20px;
-    margin-bottom: 25px;
+.sans {
+    width: 200px;
+    margin-bottom: 10px;
 }
 
-.login-container input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 4px solid #00ff00;
-    border-radius: 0;
-    background: #1a1a1a;
-    color: #00ff00;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 12px;
-    transition: 0.3s;
+h1 {
+    font-size: 42px;
+    text-shadow: 0 0 10px white;
 }
 
-.login-container input:focus {
-    outline: none;
-    border-color: #ffff00;
-    box-shadow: 0 0 10px #ffff00;
-}
-
-.login-container button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    border: none;
-    background: #00ff00;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: 'Press Start 2P', cursive;
-    text-shadow: 1px 1px #000;
-    transition: 0.3s;
-    border-radius: 0;
-    position: relative;
+.typing {
+    font-size: 22px;
+    white-space: nowrap;
+    border-right: 2px solid white;
     overflow: hidden;
 }
 
-.login-container button:hover {
-    background: #ffff00;
-    color: #000;
-    box-shadow: 0 0 15px #ffff00;
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    background: black;
+    color: white;
+    border: 2px solid white;
+    font-size: 20px;
 }
 
-.login-container a {
-    display: block;
-    margin-top: 15px;
-    font-size: 10px;
-    color: #00ff00;
-    text-decoration: none;
-    transition: 0.3s;
+input:focus {
+    border-color: yellow;
+    box-shadow: 0 0 15px yellow;
 }
 
-.login-container a:hover {
-    color: #ffff00;
+button {
+    width: 100%;
+    padding: 12px;
+    background: black;
+    border: 2px solid white;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}
+
+/* Tremor */
+.shake {
+    animation: shakeAnim 0.2s linear;
+}
+@keyframes shakeAnim {
+    0% { transform: translate(2px, 2px); }
+    25% { transform: translate(-2px, 2px); }
+    50% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, -2px); }
+    100% { transform: translate(0,0); }
+}
+
+.signup {
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center; /* centraliza o texto horizontalmente */
+}
+.signup a {
+  color: #007bff;
+  text-decoration: none;
+}
+.signup a:hover {
+  text-decoration: underline;
 }
