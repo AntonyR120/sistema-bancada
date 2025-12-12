@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Bancadas</title>
+<link rel="stylesheet" href="bancada.css">
+</head>
+<body>
+
+
+
+<div id="particles"></div>
+
+<header>
+    <h1 class="fadeIn">BANCADAS</h1>
+</header>
+
+<main class="fadeInSlow">
+    <section class="container">
+
+        <article class="card" data-titulo="Bancada Estoque">
+            <h2>BANCADA ESTOQUE</h2>
+            <img src="./assets/bancada_estoque.png" alt="Bancada Estoque">
+            <button class="btnDetalhes">> Ver Detalhes</button>
+        </article>
+
+        <article class="card" data-titulo="Bancada Expedição">
+            <h2>BANCADA EXPEDIÇÃO</h2>
+            <img src="./assets/bancada_expedicao.png" alt="Bancada Expedição">
+            <button class="btnDetalhes">> Ver Detalhes</button>
+        </article>
+
+        <article class="card" data-titulo="Bancada Montagem">
+            <h2>BANCADA MONTAGEM</h2>
+            <img src="./assets/bancada_montagem.png" alt="Bancada Montagem">
+            <button class="btnDetalhes">> Ver Detalhes</button>
+        </article>
+
+        <article class="card" data-titulo="Bancada Processo">
+            <h2>BANCADA PROCESSO</h2>
+            <img src="./assets/bancada_processo.png" alt="Bancada Processo">
+            <button class="btnDetalhes">> Ver Detalhes</button>
+        </article>
+
+    </section>
+</main>
+
+<div id="modal" class="modal">
+    <div class="modal-box slideUp">
+        <p id="modalTitulo"></p>
+        <button id="closeModal" class="closeBtn">> Fechar</button>
+    </div>
+</div>
+
+<script src="bancada.js"></script>
+</body>
+</html>

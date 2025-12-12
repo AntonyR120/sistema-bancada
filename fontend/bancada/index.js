@@ -1,3 +1,4 @@
+
 const text = "* Por favor, insira seus dados.";
 let index = 0;
 
@@ -195,3 +196,4 @@ function animateParticles() {
 }
 
 animateParticles();
+
