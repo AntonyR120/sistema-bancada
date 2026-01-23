@@ -1,64 +1,88 @@
 
-window.onload = ()=>{
-    polling(5)
+const sidebar = document.getElementById('sidebar');
+const openSidebarBtn = document.getElementById('openSidebar');
+const closeSidebarBtn = document.getElementById('closeSidebar');
+
+openSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.add('active');
+});
+
+closeSidebarBtn.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+});
+
+// ====== LISTA DE USUÁRIOS ======
+let users = [
+    { nome: 'João Silva', email: 'joao@gmail.com' },
+    { nome: 'Maria Santos', email: 'maria@gmail.com' },
+    { nome: 'Pedro Lima', email: 'pedro@gmail.com' }
+];
+
+const userList = document.getElementById('userList');
+const searchInput = document.getElementById('searchUser');
+
+function renderUsers(filter = '') {
+    userList.innerHTML = '';
+    users
+        .filter(u => u.nome.toLowerCase().includes(filter.toLowerCase()))
+        .forEach((user, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${user.nome}</span>
+                <span class="userActions">
+                    <button class="editBtn" data-index="${index}">Editar</button>
+                    <button class="deleteBtn" data-index="${index}">Remover</button>
+                </span>
+            `;
+            userList.appendChild(li);
+        });
+
+    document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const i = e.target.dataset.index;
+            const novoNome = prompt('Editar nome do usuário:', users[i].nome);
+            if (novoNome) {
+                users[i].nome = novoNome;
+                renderUsers(searchInput.value);
+            }
+        });
+    });
+
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const i = e.target.dataset.index;
+            if (confirm(`Deseja remover ${users[i].nome}?`)) {
+                users.splice(i, 1);
+                renderUsers(searchInput.value);
+            }
+        });
+    });
 }
 
-function polling(segundos){
-    setTimeout(()=>{
-       console.log('Buscando...')
-       buscarDadosBancada()
-       polling(segundos)
-    },segundos*1000)
-}
+searchInput.addEventListener('input', e => {
+    renderUsers(e.target.value);
+});
 
-function buscarDadosBancada(){
-    fetch('http://10.77.241.189:1893/api/smartsense/estoque')
-     .then(res=>res.json())
-     .then(data=>{
-      console.log(data)  
-     }) 
-}
+// Render inicial
+renderUsers();
 
-const modal = document.getElementById("modal");
-const modalTitulo = document.getElementById("modalTitulo");
-const closeModal = document.getElementById("closeModal");
-const themeBtn = document.getElementById("toggleTheme");
-const particles = document.getElementById("particles");
+// ====== DETALHES DAS BANCADAS ======
+const modal = document.getElementById('modal');
+const modalTitulo = document.getElementById('modalTitulo');
+const closeModalBtn = document.getElementById('closeModal');
 
-/* MODAL */
-document.querySelectorAll(".btnDetalhes").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const card = btn.closest(".card");
+document.querySelectorAll('.btnDetalhes').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const card = btn.closest('.card');
         modalTitulo.textContent = card.dataset.titulo;
-        modal.style.display = "flex";
+        modal.style.display = 'flex';
     });
 });
 
-closeModal.onclick = () => modal.style.display = "none";
-window.onclick = e => { if(e.target === modal) modal.style.display = "none"; };
+closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
 
-/* PARTICULAS SIMPLES */
-function createParticle(){
-    const p = document.createElement("div");
-    p.classList.add("particle");
-    p.style.left = Math.random()*100 + "vw";
-    p.style.opacity = Math.random();
-    p.style.width = p.style.height = (2+Math.random()*3) + "px";
-    particles.appendChild(p);
-    setTimeout(()=>p.remove(),10000);
-}
-setInterval(createParticle,200);
-
-/* TEMA CLARO / ESCURO */
-themeBtn.onclick = () => document.body.classList.toggle("light");
-
-/* BRILHO SEGUINDO O MOUSE */
-document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--shineX', x + 'px');
-        card.style.setProperty('--shineY', y + 'px');
-    });
+window.addEventListener('click', e => {
+    if (e.target === modal) modal.style.display = 'none';
 });

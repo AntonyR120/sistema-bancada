@@ -1,199 +1,95 @@
+// "Banco de dados" em memória (apenas para exemplo)
+let usuarios = [];
 
-const text = "* Por favor, insira seus dados.";
-let index = 0;
-
-const typeSound = document.getElementById("typeSound");
-const selectSound = document.getElementById("selectSound");
-const errorSound = document.getElementById("errorSound");
-
-function typeEffect() {
-    const typing = document.getElementById("typingText");
-
-    if (index < text.length) {
-        typing.textContent += text.charAt(index);
-        typeSound.currentTime = 0;
-        typeSound.play();
-        index++;
-        setTimeout(typeEffect, 40);
-    }
+/* =========================
+   CONTROLE DE TELAS
+========================= */
+function mostrarCadastro() {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("cadastro").classList.remove("hidden");
 }
-window.onload = typeEffect;
 
+function mostrarLogin() {
+    document.getElementById("cadastro").classList.add("hidden");
+    document.getElementById("login").classList.remove("hidden");
+}
 
-// LOGIN REAL (localStorage)
-function login() {
-    let u = document.getElementById("usuario").value;
-    let s = document.getElementById("senha").value;
+/* =========================
+   CADASTRO
+========================= */
+function cadastrar() {
+    const user = document.getElementById("cadUser").value.trim();
+    const nascimento = document.getElementById("cadNascimento").value;
+    const pass = document.getElementById("cadPass").value;
+    const pass2 = document.getElementById("cadPass2").value;
 
-    if (u === "" || s === "") {
-        error();
+    const erro = document.getElementById("cadError");
+    const sucesso = document.getElementById("cadSuccess");
+
+    erro.innerText = "";
+    sucesso.innerText = "";
+
+    if (!user || !nascimento || !pass || !pass2) {
+        erro.innerText = "Preencha todos os campos.";
         return;
     }
 
-    selectSound.play();
-
-    localStorage.setItem("user", u);
-
-    document.getElementById("fade").style.animation = "fadeOut 1.5s forwards";
-
-    alert("* Login realizado com sucesso!");
-}
-
-
-/* Tremor */
-function error() {
-    errorSound.play();
-    document.body.classList.add("shake");
-    setTimeout(() => {
-        document.body.classList.remove("shake");
-    }, 300);
-}
-
-
-
-/* === PARTÍCULAS BRANCAS === */
-
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particlesArray = [];
-
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.4;
-        this.speedY = (Math.random() - 0.5) * 0.4;
-        this.opacity = Math.random() * 0.5 + 0.3;
+    if (pass.length < 6) {
+        erro.innerText = "A senha deve ter pelo menos 6 caracteres.";
+        return;
     }
 
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x < 0 || this.x > canvas.width ||
-            this.y < 0 || this.y > canvas.height) {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-        }
+    if (pass !== pass2) {
+        erro.innerText = "As senhas não coincidem.";
+        return;
     }
 
-    draw() {
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-function initParticles() {
-    particlesArray = [];
-    for (let i = 0; i < 120; i++) {
-        particlesArray.push(new Particle());
-    }
-}
-
-window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initParticles();
-});
-
-initParticles();
-
-
-
-/* === CORAÇÃO SEGUINDO O MOUSE + PULSANDO + RASTRO === */
-
-const heart = document.getElementById("heart");
-
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-
-document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-// Variáveis do pulso
-let pulseScale = 1;
-let pulseDirection = 1; // 1 = aumentando, -1 = diminuindo
-const pulseSpeed = 0.02; // velocidade do pulso
-const pulseMax = 1.4; // tamanho máximo
-const pulseMin = 1.0; // tamanho mínimo
-
-// Rastro vermelho do coração
-let trailParticles = [];
-
-class TrailParticle {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = Math.random() * 6 + 2;
-        this.opacity = 0.6;
+    const existe = usuarios.find(u => u.user === user);
+    if (existe) {
+        erro.innerText = "Usuário já cadastrado.";
+        return;
     }
 
-    update() {
-        this.opacity -= 0.02; // desaparece lentamente
-        this.size *= 0.95; // encolhe
-    }
-
-    draw() {
-        ctx.fillStyle = `rgba(255,0,0,${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-function moveAndPulseHeart() {
-    // Atualiza posição
-    heart.style.left = mouseX + "px";
-    heart.style.top = mouseY + "px";
-
-    // Atualiza escala para pulsar
-    pulseScale += pulseDirection * pulseSpeed;
-    if (pulseScale >= pulseMax) pulseDirection = -1;
-    if (pulseScale <= pulseMin) pulseDirection = 1;
-    heart.style.transform = `translate(-50%, -50%) scale(${pulseScale})`;
-
-    // Adiciona nova partícula do rastro
-    trailParticles.push(new TrailParticle(mouseX, mouseY));
-
-    // Atualiza partículas do rastro
-    trailParticles.forEach((p, index) => {
-        p.update();
-        if (p.opacity <= 0) trailParticles.splice(index, 1);
+    usuarios.push({
+        user,
+        nascimento,
+        pass
     });
 
-    requestAnimationFrame(moveAndPulseHeart);
+    sucesso.innerText = "Cadastro realizado com sucesso!";
+
+    document.getElementById("cadUser").value = "";
+    document.getElementById("cadNascimento").value = "";
+    document.getElementById("cadPass").value = "";
+    document.getElementById("cadPass2").value = "";
 }
 
-moveAndPulseHeart();
+/* =========================
+   LOGIN
+========================= */
+function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value;
+    const erro = document.getElementById("loginError");
 
+    erro.innerText = "";
 
+    if (!user || !pass) {
+        erro.innerText = "Informe usuário e senha.";
+        return;
+    }
 
-/* === ANIMAÇÃO DE TODAS AS PARTÍCULAS (brancas + rastro vermelho) === */
-function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const encontrado = usuarios.find(
+        u => u.user === user && u.pass === pass
+    );
 
-    // Partículas brancas
-    particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-    });
+    if (!encontrado) {
+        erro.innerText = "Usuário ou senha inválidos.";
+    } else {
+        // Marca usuário como logado (opcional)
+        sessionStorage.setItem("usuarioLogado", user);
 
-    // Rastro vermelho
-    trailParticles.forEach(p => {
-        p.draw();
-    });
-
-    requestAnimationFrame(animateParticles);
+        // Redireciona para a bancada
+        window.location.href = "bancada.html";
+    }
 }
-
-animateParticles();
-

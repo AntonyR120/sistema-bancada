@@ -7,13 +7,25 @@
 </head>
 <body>
 
-
-
-<div id="particles"></div>
-
 <header>
     <h1 class="fadeIn">BANCADAS</h1>
 </header>
+
+<!-- BOTÃO DE ABRIR SIDEBAR -->
+<button id="openSidebar" class="openSidebarBtn">&#9776; Usuários</button>
+
+<!-- SIDEBAR LATERAL -->
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h2>Gerenciar Usuários</h2>
+        <button id="closeSidebar">&times;</button>
+    </div>
+    <input type="text" id="searchUser" placeholder="Buscar usuário...">
+
+    <ul id="userList">
+        <!-- Usuários aparecem aqui via JS -->
+    </ul>
+</aside>
 
 <main class="fadeInSlow">
     <section class="container">
@@ -45,6 +57,7 @@
     </section>
 </main>
 
+<!-- MODAL DETALHES -->
 <div id="modal" class="modal">
     <div class="modal-box slideUp">
         <p id="modalTitulo"></p>
