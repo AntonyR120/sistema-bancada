@@ -1,88 +1,167 @@
-
+/* =======================
+   SIDEBAR USUÁRIOS
+======================= */
 const sidebar = document.getElementById('sidebar');
 const openSidebarBtn = document.getElementById('openSidebar');
 const closeSidebarBtn = document.getElementById('closeSidebar');
+const sidebarList = document.getElementById('sidebarUserList');
+const sidebarSearch = document.getElementById('sidebarSearch');
+const addUserSidebar = document.getElementById('addUserSidebar');
+const sidebarTitulo = document.getElementById('sidebarTitulo');
 
-openSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.add('active');
-});
+/* =======================
+   BANCADAS
+======================= */
+const listaBancadas = document.getElementById('listaBancadas');
+const detalhesBancada = document.getElementById('detalhesBancada');
+const tituloBancada = document.getElementById('tituloBancada');
+const btnVoltar = document.getElementById('btnVoltar');
+const cards = document.querySelectorAll('.btnDetalhes');
 
-closeSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-});
+let bancadaAtual = ''; // guarda a bancada atualmente selecionada
 
-// ====== LISTA DE USUÁRIOS ======
-let users = [
-    { nome: 'João Silva', email: 'joao@gmail.com' },
-    { nome: 'Maria Santos', email: 'maria@gmail.com' },
-    { nome: 'Pedro Lima', email: 'pedro@gmail.com' }
-];
+// Dados de exemplo para cada bancada
+const dadosBancadas = {
+    "Estoque": { temperatura: "22°C", umidade: "55%", pressao: "1013 hPa" },
+    "Expedição": { temperatura: "20°C", umidade: "60%", pressao: "1012 hPa" },
+    "Montagem": { temperatura: "24°C", umidade: "50%", pressao: "1014 hPa" },
+    "Processo": { temperatura: "23°C", umidade: "52%", pressao: "1013 hPa" }
+};
 
-const userList = document.getElementById('userList');
-const searchInput = document.getElementById('searchUser');
+/* =======================
+   ABRIR / FECHAR SIDEBAR
+======================= */
+openSidebarBtn.onclick = () => sidebar.classList.add('active');
+closeSidebarBtn.onclick = () => sidebar.classList.remove('active');
 
-function renderUsers(filter = '') {
-    userList.innerHTML = '';
-    users
-        .filter(u => u.nome.toLowerCase().includes(filter.toLowerCase()))
-        .forEach((user, index) => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <span>${user.nome}</span>
-                <span class="userActions">
-                    <button class="editBtn" data-index="${index}">Editar</button>
-                    <button class="deleteBtn" data-index="${index}">Remover</button>
-                </span>
-            `;
-            userList.appendChild(li);
-        });
-
-    document.querySelectorAll('.editBtn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            const i = e.target.dataset.index;
-            const novoNome = prompt('Editar nome do usuário:', users[i].nome);
-            if (novoNome) {
-                users[i].nome = novoNome;
-                renderUsers(searchInput.value);
-            }
-        });
-    });
-
-    document.querySelectorAll('.deleteBtn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            const i = e.target.dataset.index;
-            if (confirm(`Deseja remover ${users[i].nome}?`)) {
-                users.splice(i, 1);
-                renderUsers(searchInput.value);
-            }
-        });
-    });
+/* =======================
+   LOCALSTORAGE POR BANCADA
+======================= */
+function getUsers() {
+    return JSON.parse(localStorage.getItem(`bancada_${bancadaAtual}`)) || [];
 }
 
-searchInput.addEventListener('input', e => {
-    renderUsers(e.target.value);
-});
+function saveUsers(users) {
+    localStorage.setItem(`bancada_${bancadaAtual}`, JSON.stringify(users));
+}
 
-// Render inicial
-renderUsers();
+/* =======================
+   RENDER USUÁRIOS NA SIDEBAR
+======================= */
+function renderUsuarios(filter = '') {
+    const users = getUsers();
+    sidebarList.innerHTML = '';
 
-// ====== DETALHES DAS BANCADAS ======
-const modal = document.getElementById('modal');
-const modalTitulo = document.getElementById('modalTitulo');
-const closeModalBtn = document.getElementById('closeModal');
+    users
+        .filter(u => u.toLowerCase().includes(filter.toLowerCase()))
+        .forEach((user, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${user}</span>
+                            <div class="userActions">
+                                <button class="editBtn">Editar</button>
+                                <button class="deleteBtn">Remover</button>
+                            </div>`;
 
-document.querySelectorAll('.btnDetalhes').forEach((btn) => {
-    btn.addEventListener('click', () => {
+            // remover usuário
+            li.querySelector('.deleteBtn').onclick = () => {
+                users.splice(index, 1);
+                saveUsers(users);
+                renderUsuarios(filter);
+            };
+
+            // editar usuário
+            li.querySelector('.editBtn').onclick = () => {
+                const novoNome = prompt('Editar nome do usuário:', user);
+                if (!novoNome) return;
+                users[index] = novoNome;
+                saveUsers(users);
+                renderUsuarios(filter);
+            };
+
+            sidebarList.appendChild(li);
+        });
+}
+
+/* =======================
+   BUSCA NA SIDEBAR
+======================= */
+sidebarSearch.oninput = e => renderUsuarios(e.target.value);
+
+/* =======================
+   ADICIONAR USUÁRIO
+======================= */
+addUserSidebar.onclick = () => {
+    if (!bancadaAtual) {
+        alert('Selecione uma bancada primeiro clicando em "Ver Detalhes".');
+        return;
+    }
+    const nome = prompt('Nome do usuário:');
+    if (!nome) return;
+
+    const users = getUsers();
+    users.push(nome);
+    saveUsers(users);
+    renderUsuarios();
+};
+
+/* =======================
+   VER DETALHES DAS BANCADAS
+======================= */
+cards.forEach(btn => {
+    btn.onclick = () => {
         const card = btn.closest('.card');
-        modalTitulo.textContent = card.dataset.titulo;
-        modal.style.display = 'flex';
-    });
+        bancadaAtual = card.dataset.bancada;
+
+        // Mostrar seção de detalhes
+        listaBancadas.style.display = 'none';
+        detalhesBancada.style.display = 'block';
+
+        // Preencher título com dados da bancada
+        const dados = dadosBancadas[bancadaAtual];
+        tituloBancada.innerHTML = `
+            BANCADA ${bancadaAtual.toUpperCase()}<br>
+            <strong>Temperatura:</strong> ${dados.temperatura}<br>
+            <strong>Umidade:</strong> ${dados.umidade}<br>
+            <strong>Pressão:</strong> ${dados.pressao}
+        `;
+
+        // Atualizar título da sidebar e renderizar usuários
+        sidebarTitulo.textContent = `Usuários – ${bancadaAtual}`;
+        renderUsuarios();
+    };
 });
 
-closeModalBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
+// botão voltar
+btnVoltar.onclick = () => {
+    detalhesBancada.style.display = 'none';
+    listaBancadas.style.display = 'block';
+    sidebarTitulo.textContent = 'Usuários';
+    sidebarList.innerHTML = '';
+    bancadaAtual = '';
+};
 
-window.addEventListener('click', e => {
-    if (e.target === modal) modal.style.display = 'none';
-});
+/* =======================
+   GIF ESQUELETO BATENDO NAS PAREDES
+======================= */
+const skeletonGif = document.getElementById('skeletonGif');
+skeletonGif.style.position = 'absolute';
+
+let posX = 10, posY = 10, velX = 3, velY = 2;
+
+function moveSkeleton() {
+    const width = window.innerWidth - skeletonGif.offsetWidth;
+    const height = window.innerHeight - skeletonGif.offsetHeight;
+
+    posX += velX;
+    posY += velY;
+
+    if (posX <= 0 || posX >= width) velX = -velX;
+    if (posY <= 0 || posY >= height) velY = -velY;
+
+    skeletonGif.style.left = posX + 'px';
+    skeletonGif.style.top = posY + 'px';
+
+    requestAnimationFrame(moveSkeleton);
+}
+
+moveSkeleton();
