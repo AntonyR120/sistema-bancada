@@ -1,69 +1,3 @@
-// "Banco de dados" em memória (apenas para exemplo)
-let usuarios = [];
-
-/* =========================
-   CONTROLE DE TELAS
-========================= */
-function mostrarCadastro() {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("cadastro").classList.remove("hidden");
-}
-
-function mostrarLogin() {
-    document.getElementById("cadastro").classList.add("hidden");
-    document.getElementById("login").classList.remove("hidden");
-}
-
-/* =========================
-   CADASTRO
-========================= */
-function cadastrar() {
-    const user = document.getElementById("cadUser").value.trim();
-    const nascimento = document.getElementById("cadNascimento").value;
-    const pass = document.getElementById("cadPass").value;
-    const pass2 = document.getElementById("cadPass2").value;
-
-    const erro = document.getElementById("cadError");
-    const sucesso = document.getElementById("cadSuccess");
-
-    erro.innerText = "";
-    sucesso.innerText = "";
-
-    if (!user || !nascimento || !pass || !pass2) {
-        erro.innerText = "Preencha todos os campos.";
-        return;
-    }
-
-    if (pass.length < 6) {
-        erro.innerText = "A senha deve ter pelo menos 6 caracteres.";
-        return;
-    }
-
-    if (pass !== pass2) {
-        erro.innerText = "As senhas não coincidem.";
-        return;
-    }
-
-    const existe = usuarios.find(u => u.user === user);
-    if (existe) {
-        erro.innerText = "Usuário já cadastrado.";
-        return;
-    }
-
-    usuarios.push({
-        user,
-        nascimento,
-        pass
-    });
-
-    sucesso.innerText = "Cadastro realizado com sucesso!";
-
-    document.getElementById("cadUser").value = "";
-    document.getElementById("cadNascimento").value = "";
-    document.getElementById("cadPass").value = "";
-    document.getElementById("cadPass2").value = "";
-}
-
 /* =========================
    LOGIN
 ========================= */
@@ -79,17 +13,96 @@ function login() {
         return;
     }
 
-    const encontrado = usuarios.find(
-        u => u.user === user && u.pass === pass
-    );
+    // Usuário fixo
+    const usuarioFixo = {
+        user: "neymar",
+        pass: "1234"
+    };
 
-    if (!encontrado) {
-        erro.innerText = "Usuário ou senha inválidos.";
-    } else {
-        // Marca usuário como logado (opcional)
+    if (user === usuarioFixo.user && pass === usuarioFixo.pass) {
+        // Marca usuário como logado
         sessionStorage.setItem("usuarioLogado", user);
 
         // Redireciona para a bancada
         window.location.href = "bancada.html";
+    } else {
+        erro.innerText = "Usuário ou senha inválidos.";
     }
+}
+
+/* =========================
+   FETCH (opcional)
+========================= */
+function enviarLoginServidor() {
+    const usuario = {
+        user: "neymar",
+        pass: "1234"
+    };
+
+    fetch("http://localhost:1880/autenticacao/autenticar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(usuario)
+    })
+    .then(resposta => {
+        if (resposta.ok) {
+            return resposta.json();
+        } else {
+            throw new Error("Erro no servidor");
+        }
+    })
+    .then(data => {
+        console.log("Resposta do servidor:", data);
+        alert("Login enviado para o servidor com sucesso!");
+    })
+    .catch(erro => {
+        console.error("Erro no fetch:", erro);
+        alert("Não foi possível enviar login para o servidor.");
+    });
+}
+
+// EDITAR USUÁRIO
+function editarUsuario(usuarioId, dadosAtualizados) {
+    fetch(`http://localhost:1880/autenticacao/usuario/${usuarioId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dadosAtualizados)
+    })
+    .then(resposta => {
+        if (resposta.ok) {
+            return resposta.json();
+        } else {
+            throw new Error("Erro ao editar usuário no servidor");
+        }
+    })
+    .then(data => {
+        console.log("Usuário editado:", data);
+        alert("Usuário atualizado com sucesso!");
+    })
+    .catch(erro => {
+        console.error("Erro no fetch:", erro);
+        alert("Não foi possível atualizar o usuário no servidor.");
+    });
+}
+
+// REMOVER USUÁRIO
+function removerUsuario(usuarioId) {
+    fetch(`http://localhost:1880/autenticacao/usuario/${usuarioId}`, {
+        method: "DELETE"
+    })
+    .then(resposta => {
+        if (resposta.ok) {
+            alert("Usuário removido com sucesso!");
+        } else {
+            throw new Error("Erro ao remover usuário no servidor");
+        }
+    })
+    .catch(erro => {
+        console.error("Erro no fetch:", erro);
+        alert("Não foi possível remover o usuário.");
+    });
 }

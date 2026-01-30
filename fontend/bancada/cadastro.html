@@ -2,31 +2,44 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <title>Cadastro de Usuário</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
-    <link rel="stylesheet" href="cadastro.css">
+    <link rel="stylesheet" href="bancada.css">
 </head>
 <body>
 
-<div class="container">
-    <h1 class="title">CADASTRO</h1>
+<header>
+    <h1>CADASTRO DE USUÁRIO</h1>
+</header>
 
-    <form id="formCadastro">
-        <label>Nome</label>
-        <input type="text" id="nome" required>
+<main class="container">
+    <section class="card cadastro-card">
 
-        <label>Email</label>
-        <input type="email" id="email" required>
+        <h2>Novo Cadastro</h2>
 
-        <label>Senha</label>
-        <input type="password" id="senha" required>
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="text" id="sobrenome" placeholder="Sobrenome">
+        <input type="date" id="nascimento">
 
-        <button type="submit">CRIAR CONTA</button>
-    </form>
+        <select id="tipoUsuario">
+            <option value="">Tipo de usuário</option>
+            <option value="admin">Administrador</option>
+            <option value="operador">Operador</option>
+            <option value="usuario">Usuário</option>
+        </select>
 
-    <p id="mensagem" class="mensagem"></p>
-</div>
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="password" id="senha" placeholder="Senha">
 
-<script src="cadastro.js"></script>
+        <button onclick="cadastrarUsuario()">Cadastrar</button>
+
+        <button onclick="window.location.href='bancada.html'" class="btnVoltar">
+            ← Voltar
+        </button>
+     
+    </section>
+    <script src="cadastro.js"></script>
+</main>
+
 </body>
 </html>

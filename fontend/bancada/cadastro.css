@@ -62,3 +62,30 @@ button:hover {
     font-size: 12px;
     min-height: 20px;
 }
+
+.cadastro-card {
+    max-width: 400px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cadastro-card input,
+.cadastro-card select {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+.cadastro-card button {
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btnVoltar {
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+}

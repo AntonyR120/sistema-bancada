@@ -17,11 +17,20 @@
         <h2 id="sidebarTitulo">Usuários</h2>
         <button id="closeSidebar">&times;</button>
     </div>
+<div class="acoesSidebar">
+    <input type="text" id="sidebarSearch" placeholder="Buscar usuário...">
 
-    <div class="acoesSidebar">
-        <input type="text" id="sidebarSearch" placeholder="Buscar usuário...">
-        <button id="addUserSidebar">+ Adicionar Usuário</button>
-    </div>
+    <button class="sidebarBtn" id="addUserSidebar">
+        + Adicionar Usuário
+    </button>
+
+    <button class="sidebarBtn"
+        onclick="window.location.href='cadastro.html'">
+        Cadastro
+    </button>
+</div>
+
+
 
     <ul id="sidebarUserList">
         <li>João</li>
