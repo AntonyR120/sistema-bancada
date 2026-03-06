@@ -64,3 +64,71 @@ function cadastrarUsuario() {
         alert("Não foi possível cadastrar no servidor.");
     });
 }
+
+async function logar(e){
+    e.preventDefault();
+
+    let input_email = document.getElementById('email');
+    let input_senha = document.getElementById('senha');
+
+    if(!input_email || !input_senha){
+        alert("Inputs não encontrados")
+        return;
+    }
+
+    let email = input_email.value;
+    let senha = input_senha.value;
+
+    try{
+
+        let resposta = await fetch("http://localhost:1880/autenticar",{
+            method:'POST',
+            body:JSON.stringify({email,senha})
+            //body:{email,senha}
+        })
+
+        if(resposta.status == 200){
+            alert("Entrou");
+            window.location.href = "./bancadas/bancadas.html";
+        }else{
+            alert("Usuário ou senha inválidos")
+        }
+    }catch(erro){
+        alert("Erro ao buscar, confira o console para ver mais detalhes.")
+        console.error(erro);
+    }
+}
+
+async function logar(e){
+    e.preventDefault();
+
+    let input_email = document.getElementById('email');
+    let input_senha = document.getElementById('senha');
+
+    if(!input_email || !input_senha){
+        alert("Inputs não encontrados")
+        return;
+    }
+
+    let email = input_email.value;
+    let senha = input_senha.value;
+
+    try{
+
+        let resposta = await fetch("http://localhost:1880/autenticar",{
+            method:'POST',
+            body:JSON.stringify({email,senha})
+            //body:{email,senha}
+        })
+
+        if(resposta.status == 200){
+            alert("Entrou");
+            window.location.href = "./bancadas/bancadas.html";
+        }else{
+            alert("Usuário ou senha inválidos")
+        }
+    }catch(erro){
+        alert("Erro ao buscar, confira o console para ver mais detalhes.")
+        console.error(erro);
+    }
+}

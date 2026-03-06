@@ -165,3 +165,98 @@ function moveSkeleton() {
 }
 
 moveSkeleton();
+
+const coresBase = ["Azul","Preto","Vermelho"];
+
+function gerarEstoque(){
+
+    let estoque = [];
+
+    for(let i=1;i<=28;i++){
+
+        estoque.push({
+            id:i,
+            cor: coresBase[Math.floor(Math.random()*3)],
+            disponivel:true
+        });
+
+    }
+
+    localStorage.setItem("estoque",JSON.stringify(estoque));
+}
+
+if(!localStorage.getItem("estoque")){
+    gerarEstoque();
+}
+
+function getPedidos(){
+    return JSON.parse(localStorage.getItem("pedidos")) || [];
+}
+
+function salvarPedidos(pedidos){
+    localStorage.setItem("pedidos",JSON.stringify(pedidos));
+}
+
+function criarPedido(){
+
+    const cores = ["Azul","Preto","Vermelho"];
+
+    const novoPedido = {
+
+        id: Date.now(),
+
+        corBase: cores[Math.floor(Math.random()*3)],
+
+        parede1: cores[Math.floor(Math.random()*3)],
+        parede2: cores[Math.floor(Math.random()*3)],
+        parede3: cores[Math.floor(Math.random()*3)],
+
+        status:"Não iniciado",
+        bancada:"Estoque"
+
+    };
+
+    let pedidos = getPedidos();
+    pedidos.push(novoPedido);
+
+    salvarPedidos(pedidos);
+
+    alert("Pedido criado!");
+}
+
+function renderPedidos(){
+
+    const pedidos = getPedidos();
+
+    const container = document.createElement("div");
+
+    pedidos.forEach(p=>{
+
+        const div = document.createElement("div");
+
+        div.innerHTML = `
+        <p>ID: ${p.id}</p>
+        <p>Base: ${p.corBase}</p>
+        <p>Status: ${p.status}</p>
+        `;
+
+        container.appendChild(div);
+
+    });
+
+    detalhesBancada.appendChild(container);
+}
+
+
+function atualizarStatus(id,novoStatus){
+
+    let pedidos = getPedidos();
+
+    let pedido = pedidos.find(p=>p.id==id);
+
+    if(pedido){
+        pedido.status = novoStatus;
+        salvarPedidos(pedidos);
+    }
+
+}
