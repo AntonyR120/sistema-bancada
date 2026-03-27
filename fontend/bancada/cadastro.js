@@ -41,7 +41,7 @@ function cadastrarUsuario() {
     document.getElementById("senha").value = "";
 
     // Envia para servidor Node-RED
-    fetch("http://localhost:1880/autenticacao/autenticar", {
+    fetch("http://localhost:1880/cadastrar", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -132,3 +132,4 @@ async function logar(e){
         console.error(erro);
     }
 }
+
